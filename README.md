@@ -5,15 +5,14 @@
 ##   自定向下的递归实现
 
 ```c++
-
 int CUT_ROD(int p[ARRAYLEN],int n){
     int q;
     if( n==0 ){
         return 0;
     }
     q = -1;
-    for( int i=ARRAYLEN-n;i<ARRAYLEN;i++){
-        q = std::max(q,p[i]+CUT_ROD(p,n-i-1));
+    for( int i=1;i<=n;i++){
+        q = std::max(q,p[i-1]+CUT_ROD(p,n-i));
     }
     return q;
 }
@@ -28,3 +27,22 @@ int CUT_ROD(int p[ARRAYLEN],int n){
 - 带备忘的自顶向下法，在求解过程中保存每个子问题的解
 - 自底向上法，将子问题按照规模排序，按照有小到大依次求解
 
+
+
+## 矩阵链乘法
+
+两个矩阵的乘法次数
+$$
+A_{ij}*A_{jk} = A_{ik}
+$$
+乘法的次数是ijk,因此，多个矩阵的乘法次数取决于相乘的顺序。
+
+对于A1A2A3A4
+
+| 一次括号 | 两次括号          |
+| -------- | ----------------- |
+| A12A3A4  | A123A4     A12A34 |
+| A1A23A4  | A123A4     A1A234 |
+| A1A2A34  | A12A34     A1A234 |
+
+由上可以知道，总共有A123A4、A12A34、A1A234、A1
