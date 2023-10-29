@@ -6,6 +6,7 @@
 const int ARRAYLEN = 10;
 int CUT_ROD(int p[ARRAYLEN],int n);
 int MEMOIZED_CUT_ROD(int p[ARRAYLEN],int n,int r[ARRAYLEN]);
+int BUTTOM_UP_CUT_ROD(int p[ARRAYLEN],int n,int r[ARRAYLEN]);
 int main(){
 
     int p[ARRAYLEN] = {1,5,8,9,10,17,17,20,24,30};
@@ -21,6 +22,12 @@ int main(){
     auto mend = std::chrono::high_resolution_clock ::now();
     std::chrono::duration<double,std::milli> mduration = mend-mstart;
     std::cout << "带备忘的程序执行时间:" << mduration.count() << "毫秒"<< std::endl;
+
+    auto bstart = std::chrono::high_resolution_clock ::now();
+    std::cout << BUTTOM_UP_CUT_ROD(p,ARRAYLEN,r) << std::endl;
+    auto bend = std::chrono::high_resolution_clock ::now();
+    std::chrono::duration<double,std::milli> bduration = bend-bstart;
+    std::cout << "自底向上的程序执行时间:" << bduration.count() << "毫秒"<< std::endl;
 
     return 0;
 }
@@ -41,26 +48,25 @@ int CUT_ROD(int p[ARRAYLEN],int n){
 int MEMOIZED_CUT_ROD(int p[ARRAYLEN],int n,int r[ARRAYLEN]){
     int q;
     if( n==0 ){
-        std::cout << 0 << std::endl;
         return 0;
     }
-    if( n==1 ){
-        std::cout << r[0] << std::endl;
-        r[0] = p[0];
-        return r[0];
+    if(r[n-1] > 0){
+      return r[n-1];
     }
     q = -1;
-    for( int i=1;i<=n;i++){
-        if(n-i > 0 && r[n-i-1] > 0 ){
-            q = std::max(q,p[i-1]+r[n-i-1]);
-        }else{
-            q = std::max(q,p[i-1]+MEMOIZED_CUT_ROD(p,n-i,r));
-
-        }
-
+    for( int i=1;i<=n;i++ ){
+      q = std::max(q,p[i-1]+MEMOIZED_CUT_ROD(p,n-i,r));
     }
     r[n-1] = q;
-    std::cout<< n-1 << " "<<q <<std::endl;
     return q;
+}
 
+int BUTTOM_UP_CUT_ROD(int p[ARRAYLEN],int n,int r[ARRAYLEN]){
+  for(int k=0;k<n;k++){
+    r[k] = p[k];
+    for(int i = 0;i<k;i++){
+      r[k] = std::max(r[k],p[i]+r[k-i-1]);
+    }
+  }
+  return r[n-1];
 }
